@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>WebApp - Login</title>
+    </head>
+    <body>
+        <h1>Login</h1>
+        <p>Username:</p>
+        <input id="username" type="text">
+        <div></div>
+        <p>Password:</p>
+        <input id="password" type="password">
+        <div></div>
+        <div></div>
+        <p></p>
+        <button id="login">Log In</button>
+
+        <script>
+            const usernameInput = document.getElementById("username")
+            const passwordInput = document.getElementById("password")
+
+            const loginButton = document.querySelector("#login")
+            let debounce = false
+
+            loginButton.addEventListener("click", () => {
+                if (debounce) return
+                debounce = true
+
+                const username = usernameInput.value
+                const password = passwordInput.value
+
+                fetch("/auth/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ username, password })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = "/home"
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+                .finally(() => {
+                    debounce = false
+                })
+            })
+        </script>
+    </body>
+</html>
