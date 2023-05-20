@@ -5,5 +5,15 @@
     </head>
     <body>
         <h1>Welcome to WebApp!</h1>
+        <button id="login">Log In</button>
+        <button id="signup">Sign Up</button>
+
+        <script>
+            const loginButton = document.querySelector("#login")
+            const signupButton = document.querySelector("#signup")
+
+            loginButton.addEventListener("click", () => window.location.href = "/auth/login")
+            signupButton.addEventListener("click", () => window.location.href = "/auth/signup")
+        </script>
     </body>
 </html>

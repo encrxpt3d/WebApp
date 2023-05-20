@@ -2,16 +2,16 @@ const express = require("express");
 const session = require("express-session");
 const bodyParser = require('body-parser');
 const path = require("path");
-const endpoints = require("../endpoints/initializer");
+const initializer = require("../endpoints/initializer");
+
+const { connectDb } = require("../database/mongo")
 const server = express();
 
 const port = process.env.PORT;
-const username = process.env.USERNAME;
-const password = process.env.PASSWORD;
 
 const MongoDBStore = require('connect-mongodb-session')(session);
 const store = new MongoDBStore({
-    uri: "mongodb+srv://" + username + ":" + password + "@webapp.uqjueuv.mongodb.net/",
+    uri: process.env.URI,
     collection: 'sessions'
 });
 
@@ -32,8 +32,18 @@ server.use(session({
     store: store
 }));
 
-endpoints.init(server);
-
-server.listen(port, () => {
-    console.log("[SERVER]: " + port);
-});
+connectDb()
+    .then(() => {
+        initializer.init(server)
+            .then(() => {
+                server.listen(port, () => {
+                    console.log("[SERVER]: Listening");
+                });
+            })
+            .catch((error) => {
+                console.error("Error initializing endpoints:", error);
+            });
+    })
+    .catch((error) => {
+        console.error("Error connecting to the database:", error);
+    });

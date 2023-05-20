@@ -6,23 +6,47 @@
     <body>
         <h1>Login</h1>
         <p>Username:</p>
-        <input id="username" type="text">
+        <input id="username" type="text" required>
         <div></div>
         <p>Password:</p>
-        <input id="password" type="password">
+        <input id="password" type="password" required>
         <div></div>
         <div></div>
         <p></p>
         <button id="login">Log In</button>
+        <div id="status-text"></div>
+        <div></div>
+        <p>Don't have an account? Click <a href="#void" id="signup">here</a> to register a new one!</p>
 
         <script>
             const usernameInput = document.getElementById("username")
             const passwordInput = document.getElementById("password")
 
             const loginButton = document.querySelector("#login")
+            const signupHT = document.querySelector("#signup")
+            const statusText = document.querySelector("#status-text")
+
             let debounce = false
 
-            loginButton.addEventListener("click", () => {
+            signupHT.addEventListener("click", () => {
+                window.location.href = "/auth/signup"
+            })
+
+            usernameInput.addEventListener("keydown", (event) => {
+                if (event.key === "Enter") {
+                    login();
+                }
+            })
+
+            passwordInput.addEventListener("keydown", (event) => {
+                if (event.key === "Enter") {
+                    login();
+                }
+            })
+
+            loginButton.addEventListener("click", login)
+
+            function login() {
                 if (debounce) return
                 debounce = true
 
@@ -39,15 +63,24 @@
                 .then(response => {
                     if (response.ok) {
                         window.location.href = "/home"
+                    } else {
+                        response.text().then(text => {
+                            statusText.textContent = text;
+                            setTimeout(() => {
+                                statusText.textContent = "";
+                            }, 3000)
+                        });
                     }
                 })
                 .catch(err => {
                     console.log(err)
                 })
                 .finally(() => {
-                    debounce = false
+                    setTimeout(() => {
+                        debounce = false
+                    }, 3000)
                 })
-            })
+            }
         </script>
     </body>
 </html>

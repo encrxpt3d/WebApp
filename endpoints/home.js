@@ -1,9 +1,7 @@
 const home = {};
 
 home.init = async (server) => {
-    server.get("/home", (req, res) => {
-        res.render("home", { username: res.user.username || "N/A" });
-    });
+    server.get("/home", (req, res) => res.render("home", req.session.user));
 };
 
 module.exports = home;

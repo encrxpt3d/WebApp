@@ -5,5 +5,82 @@
     </head>
     <body>
         <h1>Signup</h1>
+        <p>Username:</p>
+        <input id="username" type="text" required>
+        <div></div>
+        <p>Password:</p>
+        <input id="password" type="password" required>
+        <div></div>
+        <div></div>
+        <p></p>
+        <button id="signup">Sign Up</button>
+        <div id="status-text"></div>
+        <div></div>
+        <p>Have an account? Click <a href="#void" id="login">here</a> to log in!</p>
+
+        <script>
+            const usernameInput = document.getElementById("username")
+            const passwordInput = document.getElementById("password")
+
+            const signupButton = document.querySelector("#signup")
+            const loginHT = document.querySelector("#login")
+            const statusText = document.querySelector("#status-text")
+
+            let debounce = false
+
+            loginHT.addEventListener("click", () => {
+                window.location.href = "/auth/login"
+            })
+
+            usernameInput.addEventListener("keydown", (event) => {
+                if (event.key === "Enter") {
+                    signup();
+                }
+            })
+
+            passwordInput.addEventListener("keydown", (event) => {
+                if (event.key === "Enter") {
+                    signup();
+                }
+            })
+
+            signupButton.addEventListener("click", signup)
+
+            function signup() {
+                if (debounce) return
+                debounce = true
+
+                const username = usernameInput.value
+                const password = passwordInput.value
+
+                fetch("/auth/signup", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ username, password })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = "/home"
+                    } else {
+                        response.text().then(text => {
+                            statusText.textContent = text;
+                            setTimeout(() => {
+                                statusText.textContent = "";
+                            }, 3000)
+                        });
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+                .finally(() => {
+                    setTimeout(() => {
+                        debounce = false
+                    }, 3000)
+                })
+            }
+        </script>
     </body>
 </html>
